@@ -31,7 +31,14 @@
       <a-form-item label="Select Days">
         <a-checkbox-group
           :options="daysOptions"
-          v-decorator="['days', { initialValue: fields.days }]"
+          v-decorator="[
+            'days',
+            {
+              required: true,
+              message: 'Please select days',
+              initialValue: fields.days
+            }
+          ]"
           :disabled="loading"
         />
       </a-form-item>
@@ -42,6 +49,9 @@
           block
           class="submit"
           :loading="loading"
+          :disabled="
+            !form.getFieldValue('days') || !form.getFieldValue('days').length
+          "
         >
           Save
         </a-button>
@@ -53,7 +63,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { dateFormats, daysOptions } from '../../helpers/constants';
-import { getEvents } from '../../services/event';
 
 export default Vue.extend({
   data() {
@@ -74,21 +83,17 @@ export default Vue.extend({
   methods: {
     onSubmit(e: { preventDefault: () => void }) {
       e.preventDefault();
-      this.form.validateFields((err, { date, days }) => {
+      this.form.validateFields(async (err, value) => {
         if (!err) {
-          this.$store.commit('calendar/setLoading', true);
-          this.$store.commit('calendar/setFields', { date, days, event });
-          getEvents()
-            .then(res => {
-              console.log('GET EVENTS:', res);
-
+          this.$store
+            .dispatch('calendar/addEventsAsync', value)
+            .then((res: { message: string }) => {
               this.$notification.success({
                 message: 'Success!',
-                description: 'Event saved successfully!',
+                description: res.message,
                 placement: 'topLeft'
               });
-            })
-            .finally(() => this.$store.commit('calendar/setLoading', false));
+            });
         }
       });
     }

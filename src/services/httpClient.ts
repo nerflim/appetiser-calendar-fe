@@ -9,14 +9,4 @@ axios.defaults.headers.common = {
 
 export const httpClient = axios.create();
 
-httpClient.interceptors.request.use(
-  config => {
-    if (localStorage.getItem('token')) {
-      config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
-    }
-    return config;
-  },
-  error => Promise.reject(error)
-);
-
 export default axios;

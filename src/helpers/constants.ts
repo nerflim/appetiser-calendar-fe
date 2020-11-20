@@ -5,6 +5,6 @@ export const daysOptions = [
   { label: 'Thu', value: 4 },
   { label: 'Fri', value: 5 },
   { label: 'Sat', value: 6 },
-  { label: 'Sun', value: 7 }
+  { label: 'Sun', value: 0 }
 ];
 export const dateFormats = ['MMM DD, YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'];

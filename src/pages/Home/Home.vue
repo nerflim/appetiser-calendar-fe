@@ -20,6 +20,18 @@ export default Vue.extend({
   components: {
     Calendar,
     Form
+  },
+  methods: {
+    async getEvents() {
+      try {
+        this.$store.dispatch('calendar/getEvents');
+      } catch (err) {
+        console.error('ERROR:', err);
+      }
+    }
+  },
+  mounted() {
+    this.getEvents();
   }
 });
 </script>
