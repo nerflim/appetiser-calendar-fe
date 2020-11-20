@@ -30,7 +30,6 @@ export default Vue.extend({
   },
   filters: {
     date(value: moment.Moment) {
-      console.log(value);
       return moment(value).format('MMM DD, YYYY');
     }
   },

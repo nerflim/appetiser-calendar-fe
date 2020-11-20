@@ -1,10 +1,12 @@
 import moment from 'moment';
 
+interface Fields {
+  event: string;
+  date?: moment.Moment[];
+  days?: number[];
+}
 interface CalendarState {
-  fields: {
-    date?: moment.Moment[];
-    days?: number[];
-  };
+  fields: Fields;
   loading: boolean;
 }
 
@@ -18,17 +20,18 @@ const calendar: CalendarModel = {
   namespaced: true,
   state: {
     fields: {
+      event: '',
       date: [moment().startOf('month'), moment().endOf('month')],
       days: undefined
     },
     loading: false
   },
   mutations: {
-    setFields(state: CalendarState, payload: { date: any; days: any }) {
+    setFields(state: CalendarState, payload: Fields) {
       state.fields = {
-        ...state.fields,
         date: payload.date,
-        days: payload.days
+        days: payload.days,
+        event: payload.event
       };
     },
     setLoading(state: CalendarState, payload: boolean) {

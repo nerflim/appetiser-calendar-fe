@@ -7,7 +7,10 @@
           :disabled="loading"
           v-decorator="[
             'event',
-            { rules: [{ required: true, message: 'Please enter an event' }] }
+            {
+              rules: [{ required: true, message: 'Please enter an event' }],
+              initialValue: fields.event
+            }
           ]"
         />
       </a-form-item>
@@ -28,7 +31,7 @@
       <a-form-item label="Select Days">
         <a-checkbox-group
           :options="daysOptions"
-          v-decorator="['days']"
+          v-decorator="['days', { initialValue: fields.days }]"
           :disabled="loading"
         />
       </a-form-item>
@@ -50,6 +53,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { dateFormats, daysOptions } from '../../helpers/constants';
+import { getEvents } from '../../services/event';
 
 export default Vue.extend({
   data() {
@@ -73,10 +77,18 @@ export default Vue.extend({
       this.form.validateFields((err, { date, days }) => {
         if (!err) {
           this.$store.commit('calendar/setLoading', true);
-          this.$store.commit('calendar/setFields', { date, days });
-          setTimeout(() => {
-            this.$store.commit('calendar/setLoading', false);
-          }, 2000);
+          this.$store.commit('calendar/setFields', { date, days, event });
+          getEvents()
+            .then(res => {
+              console.log('GET EVENTS:', res);
+
+              this.$notification.success({
+                message: 'Success!',
+                description: 'Event saved successfully!',
+                placement: 'topLeft'
+              });
+            })
+            .finally(() => this.$store.commit('calendar/setLoading', false));
         }
       });
     }
