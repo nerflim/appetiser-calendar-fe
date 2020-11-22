@@ -70,7 +70,7 @@ export default Vue.extend({
     onDelete() {
       this.$store.dispatch('calendar/deleteEventsAsync');
     },
-    onChange(value) {
+    onChange(value: moment.Moment) {
       console.log(value.format('MMM DD, YYYY'));
       this.$store.commit('calendar/setDate', value);
     }
