@@ -1,10 +1,19 @@
 <template>
   <div>
-    <h1 class="calendarRange">
-      {{ fields.date[0] | date }} - {{ fields.date[1] | date }}
-    </h1>
+    <a-row>
+      <a-col :span="4">
+        <a-button type="danger" @click="onDelete">
+          <a-icon type="delete" /> Delete All Events
+        </a-button>
+      </a-col>
+      <a-col :span="20">
+        <h1 class="calendarRange">
+          {{ date.format('MMM YYYY') }}
+        </h1>
+      </a-col>
+    </a-row>
     <a-spin :spinning="loading">
-      <a-calendar>
+      <a-calendar @panelChange="onChange">
         <ul slot="dateCellRender" slot-scope="value" class="events">
           <li
             v-for="(item, index) in getListData(value)"
@@ -32,6 +41,9 @@ export default Vue.extend({
     },
     events() {
       return this.$store.state.calendar.events;
+    },
+    date() {
+      return this.$store.state.calendar.date;
     }
   },
   filters: {
@@ -54,14 +66,24 @@ export default Vue.extend({
         }
       });
       return listData;
+    },
+    onDelete() {
+      this.$store.dispatch('calendar/deleteEventsAsync');
+    },
+    onChange(value) {
+      console.log(value.format('MMM DD, YYYY'));
+      this.$store.commit('calendar/setDate', value);
     }
   }
 });
 </script>
 
-<style scoped>
+<style>
 .calendarRange {
   text-align: right;
+}
+.ant-fullcalendar-header .ant-radio-group {
+  display: none;
 }
 .events {
   list-style: none;

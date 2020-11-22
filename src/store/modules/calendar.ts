@@ -1,4 +1,4 @@
-import { addEvents, getEvents } from '@/services/event';
+import { addEvents, deleteEvents, getEvents } from '@/services/event';
 import moment from 'moment';
 
 export interface Fields {
@@ -18,6 +18,7 @@ export interface CalendarState {
   fields: Fields;
   loading: boolean;
   events: CalendarEvent[];
+  date: moment.Moment;
 }
 
 interface CalendarModel {
@@ -35,6 +36,7 @@ const calendar: CalendarModel = {
       date: [moment().startOf('month'), moment().endOf('month')],
       days: undefined
     },
+    date: moment(),
     events: [],
     loading: false
   },
@@ -51,10 +53,13 @@ const calendar: CalendarModel = {
     },
     setEvents(state: CalendarState, payload: CalendarEvent[]) {
       state.events = payload;
+    },
+    setDate(state: CalendarState, payload: moment.Moment) {
+      state.date = payload;
     }
   },
   actions: {
-    async getEvents({ commit }) {
+    async getEvents({ commit }: any) {
       commit('setLoading', true);
       try {
         const data = await getEvents();
@@ -64,7 +69,7 @@ const calendar: CalendarModel = {
       }
       commit('setLoading', false);
     },
-    async addEventsAsync({ dispatch, commit }, payload) {
+    async addEventsAsync({ dispatch, commit }: any, payload: Fields) {
       let data = null;
       commit('setLoading', true);
       try {
@@ -75,6 +80,16 @@ const calendar: CalendarModel = {
       }
       commit('setLoading', false);
       return data;
+    },
+    async deleteEventsAsync({ dispatch, commit }: any) {
+      commit('setLoading', true);
+      try {
+        await deleteEvents();
+        await dispatch('getEvents');
+      } catch (err) {
+        console.log(err);
+      }
+      commit('setLoading', false);
     }
   }
 };
