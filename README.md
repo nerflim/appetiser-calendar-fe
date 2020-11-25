@@ -1,4 +1,4 @@
-# fe
+# Appetiser Coding Challenge - Calendar Events (FE)
 
 ## Project setup
 ```
